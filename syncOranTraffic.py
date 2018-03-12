@@ -5,12 +5,17 @@ Created on 11 Mar 2018
 '''
 
 from extraction import vnstattrafficdata, orangefupanalyzer
+import httplib
+import sys
 
-# just for the sake of example we take our json files from a prepared /tmp file
+srcipaddr = sys.argv[1]
+srcdocument = sys.argv[2]
 
-currenttraficsourcefile = open("/tmp/orangedsl.txt", "r")
-vnstatdata = vnstattrafficdata.vnstattraffic(currenttraficsourcefile.read())
-currenttraficsourcefile.close()
+connection = httplib.HTTPConnection(srcipaddr)
+connection.request("GET", srcdocument)
+response = connection.getresponse()
+vnstatdata = vnstattrafficdata.vnstattraffic(response.read())
+connection.close()
 
 orangefup = orangefupanalyzer.orangefup(vnstatdata.getDaily())
 
